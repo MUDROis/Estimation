@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
@@ -23,7 +23,7 @@
 
         /* main game card */
         .game-container {
-            max-width: 900px;
+            max-width: 750px;
             width: 100%;
             background: #fffef7;
             border-radius: 2rem;
@@ -75,7 +75,7 @@
             border-bottom: 1px solid #ede3cf;
         }
 
-        .score-box, .quest-counter, .money-box {
+        .score-box, .quest-counter {
             background: #ffffffcc;
             backdrop-filter: blur(2px);
             padding: 6px 14px;
@@ -85,23 +85,20 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
-        .score-box span, .quest-counter span, .money-box span {
+        .score-box span, .quest-counter span {
             color: #b45f1b;
         }
 
         /* main quest area */
         .quest-area {
             padding: 2rem 2rem 1.8rem;
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 2rem;
         }
 
         .scenario-card {
             background: #fefaf2;
             border-radius: 1.8rem;
             padding: 1.8rem;
-            margin-bottom: 1rem;
+            margin-bottom: 2rem;
             border-left: 12px solid #f3b33d;
             box-shadow: 0 6px 14px rgba(0, 0, 0, 0.03);
         }
@@ -212,77 +209,6 @@
             font-style: italic;
         }
 
-        /* shop section */
-        .shop-section {
-            background: #fefaf2;
-            border-radius: 1.8rem;
-            padding: 1.5rem;
-            border: 2px solid #f3b33d;
-        }
-
-        .shop-section h3 {
-            color: #2c5a2e;
-            margin-bottom: 1rem;
-            text-align: center;
-            font-size: 1.3rem;
-        }
-
-        .shop-items {
-            display: grid;
-            gap: 10px;
-        }
-
-        .shop-item {
-            background: white;
-            border: 2px solid #ddd6c8;
-            border-radius: 12px;
-            padding: 12px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
-        }
-
-        .shop-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .shop-item.purchased {
-            background: #d4edda;
-            border-color: #28a745;
-            cursor: default;
-        }
-
-        .shop-item.purchased::after {
-            content: "✓";
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: #28a745;
-            color: white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 0.8rem;
-        }
-
-        .item-name {
-            font-weight: bold;
-            color: #2d3e2b;
-            margin-bottom: 5px;
-        }
-
-        .item-price {
-            color: #b45f1b;
-            font-size: 1rem;
-            font-weight: bold;
-        }
-
         .action-buttons {
             display: flex;
             justify-content: space-between;
@@ -302,69 +228,10 @@
             background: #7a5e38;
         }
 
-        /* achievements section */
-        .achievements {
-            background: #fdf3e0;
-            padding: 1.5rem;
-            margin-top: 1rem;
-            border-radius: 1.8rem;
-        }
-
-        .achievements h3 {
-            color: #2c5a2e;
-            margin-bottom: 1rem;
-            text-align: center;
-            font-size: 1.3rem;
-        }
-
-        .achievement-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 10px;
-        }
-
-        .achievement {
-            background: white;
-            border: 2px solid #ddd6c8;
-            border-radius: 12px;
-            padding: 12px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .achievement.locked {
-            opacity: 0.6;
-            background: #f8f9fa;
-        }
-
-        .achievement.unlocked {
-            border-color: #28a745;
-            background: #d4edda;
-            animation: unlockAnimation 0.5s ease-in-out;
-        }
-
-        @keyframes unlockAnimation {
-            0% { transform: scale(0.8); opacity: 0.6; }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        .achievement span {
-            display: block;
-            font-size: 1.1em;
-            margin-bottom: 5px;
-        }
-
-        .achievement small {
-            color: #666;
-            font-size: 0.9em;
-        }
-
         /* final screen */
         .final-screen {
             text-align: center;
             padding: 2rem;
-            grid-column: 1 / -1;
         }
 
         .final-screen h2 {
@@ -398,9 +265,8 @@
             background: #fffcf5;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 550px) {
             .quest-area {
-                grid-template-columns: 1fr;
                 padding: 1.5rem;
             }
             .scenario-text {
@@ -421,40 +287,13 @@
         </h1>
         <div class="shop-sub">📐 rounding & estimation · real life maths</div>
     </div>
-    
     <div class="stats">
         <div class="score-box">🏆 SCORE: <span id="scoreValue">0</span> / <span id="totalTasksSpan">5</span></div>
         <div class="quest-counter">📋 QUEST: <span id="questIndex">1</span> / <span id="totalSpan">5</span></div>
-        <div class="money-box">💰 MONEY: $<span id="moneyValue">50</span></div>
     </div>
-
     <div id="dynamicContent" class="quest-area">
         <!-- dynamic content will be injected here -->
     </div>
-
-    <div class="achievements">
-        <h3>🏆 Achievements</h3>
-        <div class="achievement-list" id="achievementsList">
-            <div class="achievement locked">
-                <span>🎯 First Purchase</span>
-                <small>Buy your first item</small>
-            </div>
-            <div class="achievement locked">
-                <span>💰 Money Master</span>
-                <small>Reach $100</small>
-            </div>
-            <div class="achievement locked">
-                <span>🧮 Rounding Expert</span>
-                <small>Complete 5 rounds correctly</small>
-            </div>
-        </div>
-    </div>
-
-    <div class="action-buttons">
-        <button class="restart-btn" id="restartBtn">🔄 Restart Game</button>
-        <button class="next-btn" id="nextBtn" style="display: none;">➡️ Next Task</button>
-    </div>
-
     <footer>
         ✨ Round & estimate like a shopkeeper! Type numbers (use decimal point, e.g., 2.6) ✨
     </footer>
@@ -495,25 +334,12 @@
         }
     ];
 
-    // Shop items
-    const shopItems = [
-        { id: 1, name: "🍎 Apple", price: 5, effect: "bonus:5", description: "+5 очков" },
-        { id: 2, name: "📚 Textbook", price: 15, effect: "multiplier:1.5", description: "x1.5 множитель очков" },
-        { id: 3, name: "💎 Gem", price: 25, effect: "bonus:10", description: "+10 очков" },
-        { id: 4, name: "🎯 Target Practice", price: 20, effect: "bonus:money:20", description: "+$20" },
-        { id: 5, name: "🧮 Calculator", price: 30, effect: "hint:1", description: "Подсказка +1" }
-    ];
-
-    // Game state
     const TOTAL_TASKS = tasks.length;
-    let currentIndex = 0;
+    let currentIndex = 0;            // 0-based
     let currentScore = 0;
-    let money = 50;
-    let purchasedItems = [];
-    let answerLocked = false;
+    let answerLocked = false;         // after check button pressed, lock input & check button until next
     let currentCorrectAnswer = null;
-    let currentUserAnsweredCorrect = false;
-    let scoreMultiplier = 1;
+    let currentUserAnsweredCorrect = false; // whether this task already gave a point
 
     // DOM elements
     const dynamicContainer = document.getElementById("dynamicContent");
@@ -521,8 +347,6 @@
     const questIndexSpan = document.getElementById("questIndex");
     const totalTasksSpan = document.getElementById("totalTasksSpan");
     const totalSpan = document.getElementById("totalSpan");
-    const moneySpan = document.getElementById("moneyValue");
-    const achievementsList = document.getElementById("achievementsList");
 
     // helper: update stats UI
     function updateStatsUI() {
@@ -530,115 +354,25 @@
         questIndexSpan.textContent = currentIndex + 1;
         totalTasksSpan.textContent = TOTAL_TASKS;
         totalSpan.textContent = TOTAL_TASKS;
-        moneySpan.textContent = money;
     }
 
-    // render shop items
-    function renderShop() {
-        const shopContainer = document.createElement('div');
-        shopContainer.className = 'shop-section';
-        shopContainer.innerHTML = '<h3>🏪 Neighborhood Store</h3><div class="shop-items" id="shopItems"></div>';
-        
-        const shopItemsContainer = shopContainer.querySelector('#shopItems');
-        
-        shopItems.forEach(item => {
-            const isPurchased = purchasedItems.includes(item.id);
-            const itemElement = document.createElement('div');
-            itemElement.className = `shop-item ${isPurchased ? 'purchased' : ''}`;
-            
-            if (!isPurchased) {
-                itemElement.onclick = () => purchaseItem(item);
-            }
-            
-            itemElement.innerHTML = `
-                <div class="item-name">${item.name}</div>
-                <div class="item-price">$${item.price}</div>
-            `;
-            
-            shopItemsContainer.appendChild(itemElement);
-        });
-        
-        return shopContainer;
-    }
-
-    // purchase item
-    function purchaseItem(item) {
-        if (money >= item.price && !purchasedItems.includes(item.id)) {
-            money -= item.price;
-            purchasedItems.push(item.id);
-            applyItemEffect(item);
-            updateStatsUI();
-            renderAchievements();
-            showFeedback(`You bought ${item.name}! ${item.description}`, 'correct');
-            renderShop();
-        } else if (purchasedItems.includes(item.id)) {
-            showFeedback('This item is already purchased!', 'wrong');
-        } else {
-            showFeedback('Not enough money!', 'wrong');
-        }
-    }
-
-    // apply item effect
-    function applyItemEffect(item) {
-        switch (item.effect) {
-            case 'bonus:5':
-                currentScore += 5;
-                break;
-            case 'multiplier:1.5':
-                scoreMultiplier = 1.5;
-                break;
-            case 'bonus:10':
-                currentScore += 10;
-                break;
-            case 'bonus:money:20':
-                money += 20;
-                break;
-            case 'hint:1':
-                // Can add hint functionality
-                break;
-        }
-    }
-
-    // render achievements
-    function renderAchievements() {
-        achievementsList.innerHTML = '';
-        
-        const achievements = [
-            { id: "first_purchase", name: "🎯 First Purchase", description: "Buy your first item", unlocked: purchasedItems.length > 0 },
-            { id: "money_master", name: "💰 Money Master", description: "Reach $100", unlocked: money >= 100 },
-            { id: "rounding_expert", name: "🧮 Rounding Expert", description: "Complete 5 rounds correctly", unlocked: currentScore >= 5 }
-        ];
-        
-        achievements.forEach(achievement => {
-            const achievementElement = document.createElement('div');
-            achievementElement.className = `achievement ${achievement.unlocked ? 'unlocked' : 'locked'}`;
-            achievementElement.innerHTML = `
-                <span>${achievement.name}</span>
-                <small>${achievement.description}</small>
-            `;
-            achievementsList.appendChild(achievementElement);
-        });
-    }
-
-    // show feedback
-    function showFeedback(message, type) {
-        const existingFeedback = document.querySelector('.feedback');
-        if (existingFeedback) {
-            existingFeedback.remove();
-        }
-        
-        const feedbackDiv = document.createElement('div');
-        feedbackDiv.className = `feedback ${type}-feedback`;
-        feedbackDiv.textContent = message;
-        
-        const questionBox = document.querySelector('.question-box');
-        questionBox.appendChild(feedbackDiv);
-        
-        setTimeout(() => {
-            if (feedbackDiv.parentNode) {
-                feedbackDiv.remove();
-            }
-        }, 3000);
+    // render final screen after last quest completed
+    function renderFinalScreen() {
+        const perfect = currentScore === TOTAL_TASKS;
+        dynamicContainer.innerHTML = `
+            <div class="final-screen">
+                <h2>🏁 QUEST COMPLETE! 🏁</h2>
+                <div class="scenario-card" style="border-left-color: #2c5a2e;">
+                    <p style="font-size:1.3rem;">✨ You finished the <strong>Corner Shop</strong> rounding mission!</p>
+                    <p>Your final score: <strong>${currentScore} / ${TOTAL_TASKS}</strong></p>
+                    ${perfect ? '<p>🌟 PERFECT! Amazing estimation skills! 🌟</p>' : '<p>📚 Good job! Try again to become a rounding master.</p>'}
+                    <div class="final-score">🏅 ${currentScore} / ${TOTAL_TASKS} 🏅</div>
+                    <button class="play-again" id="restartFinalBtn">🔄 PLAY AGAIN</button>
+                </div>
+            </div>
+        `;
+        const restartBtn = document.getElementById("restartFinalBtn");
+        if (restartBtn) restartBtn.addEventListener("click", () => restartGame());
     }
 
     // render current task (index = currentIndex)
@@ -653,38 +387,26 @@
         currentUserAnsweredCorrect = false;
         answerLocked = false;
 
-        const shopSection = renderShop();
-        
-        dynamicContainer.innerHTML = '';
-        dynamicContainer.appendChild(shopSection);
-        
-        const scenarioCard = document.createElement('div');
-        scenarioCard.className = 'scenario-card';
-        scenarioCard.innerHTML = `
-            <div class="scenario-text">📖 ${task.scenario}</div>
-            <div class="instruction">✏️ ${task.instruction}</div>
-        `;
-        
-        const questionBox = document.createElement('div');
-        questionBox.className = 'question-box';
-        questionBox.innerHTML = `
-            <div class="input-group">
-                <input type="text" id="answerInput" placeholder="Type your answer here ..." autocomplete="off">
-                <button id="checkBtn">✔️ CHECK</button>
+        dynamicContainer.innerHTML = `
+            <div class="scenario-card">
+                <div class="scenario-text">📖 ${task.scenario}</div>
+                <div class="instruction">✏️ ${task.instruction}</div>
             </div>
-            <div class="hint">🔍 HINT: ${task.hint}</div>
+            <div class="question-box">
+                <div class="input-group">
+                    <input type="text" id="answerInput" placeholder="Type your answer here ..." autocomplete="off">
+                    <button id="checkBtn">✔️ CHECK</button>
+                </div>
+                <div id="feedbackArea" class="feedback">
+                    💡 Enter your answer and press CHECK.
+                </div>
+                <div class="hint" id="hintArea">🔍 HINT: ${task.hint}</div>
+            </div>
+            <div class="action-buttons">
+                <button id="restartBtn" class="restart-btn">🔄 Restart Quest</button>
+                <button id="nextBtn" class="next-btn" style="display: none;">➡️ NEXT TASK</button>
+            </div>
         `;
-        
-        const actionButtons = document.createElement('div');
-        actionButtons.className = 'action-buttons';
-        actionButtons.innerHTML = `
-            <button id="restartBtn" class="restart-btn">🔄 Restart Game</button>
-            <button id="nextBtn" class="next-btn" style="display: none;">➡️ Next Task</button>
-        `;
-        
-        dynamicContainer.appendChild(scenarioCard);
-        dynamicContainer.appendChild(questionBox);
-        dynamicContainer.appendChild(actionButtons);
 
         // attach event listeners
         const checkBtn = document.getElementById("checkBtn");
@@ -714,6 +436,8 @@
 
             // compare with correct answer (allow small tolerance for floating, but here exact)
             let isCorrect = false;
+            // For integer answers, compare after rounding? but we want exact equality for educational.
+            // However for 2.6 vs 2.60 it's fine. Use delta 0.0001 for safety.
             const delta = 0.00001;
             if (Math.abs(numberValue - currentCorrectAnswer) < delta) {
                 isCorrect = true;
@@ -723,17 +447,16 @@
                 if (!currentUserAnsweredCorrect) {
                     currentScore++;
                     currentUserAnsweredCorrect = true;
-                    money += 10 * scoreMultiplier;
                     updateStatsUI();
-                    renderAchievements();
                 }
                 showFeedback("✅ CORRECT! +1 point! Great rounding!", "correct");
                 answerLocked = true;
                 disableCheckAndShowNext(true);
             } else {
                 // wrong answer
-                showFeedback(`❌ WRONG. The correct answer is ${currentCorrectAnswer}. Don't worry, try again next time!`, "wrong");
+                showFeedback(`❌ WRONG. The correct answer is ${currentCorrectAnswer}. ${getEncouragement()}`, "wrong");
                 answerLocked = true;
+                // no point added
                 disableCheckAndShowNext(false);
             }
         }
@@ -746,6 +469,21 @@
             // also disable input to avoid confusion
             const inp = document.getElementById("answerInput");
             if (inp) inp.disabled = true;
+        }
+
+        function showFeedback(msg, type) {
+            const feedbackDiv = document.getElementById("feedbackArea");
+            if (!feedbackDiv) return;
+            feedbackDiv.innerHTML = msg;
+            feedbackDiv.classList.remove("correct-feedback", "wrong-feedback");
+            if (type === "correct") feedbackDiv.classList.add("correct-feedback");
+            else if (type === "wrong") feedbackDiv.classList.add("wrong-feedback");
+            else feedbackDiv.classList.remove("correct-feedback", "wrong-feedback");
+        }
+
+        function getEncouragement() {
+            const messages = ["Don't worry, try again next time!", "Estimation needs practice!", "Keep going!", "You'll master it!"];
+            return messages[Math.floor(Math.random() * messages.length)];
         }
     }
 
@@ -765,42 +503,17 @@
         }
     }
 
-    // render final screen after last quest completed
-    function renderFinalScreen() {
-        const perfect = currentScore === TOTAL_TASKS;
-        dynamicContainer.innerHTML = `
-            <div class="final-screen">
-                <h2>🏁 QUEST COMPLETE! 🏁</h2>
-                <div class="scenario-card" style="border-left-color: #2c5a2e;">
-                    <p style="font-size:1.3rem;">✨ You finished the <strong>Corner Shop</strong> rounding mission!</p>
-                    <p>Your final score: <strong>${currentScore} / ${TOTAL_TASKS}</strong></p>
-                    <p>Money earned: <strong>$${money}</strong></p>
-                    ${perfect ? '<p>🌟 PERFECT! Amazing estimation skills! 🌟</p>' : '<p>📚 Good job! Try again to become a rounding master.</p>'}
-                    <div class="final-score">🏅 ${currentScore} / ${TOTAL_TASKS} 🏅</div>
-                    <button class="play-again" id="restartFinalBtn">🔄 PLAY AGAIN</button>
-                </div>
-            </div>
-        `;
-        const restartBtn = document.getElementById("restartFinalBtn");
-        if (restartBtn) restartBtn.addEventListener("click", () => restartGame());
-    }
-
     function restartGame() {
         currentIndex = 0;
         currentScore = 0;
-        money = 50;
-        purchasedItems = [];
         answerLocked = false;
         currentUserAnsweredCorrect = false;
-        scoreMultiplier = 1;
         updateStatsUI();
-        renderAchievements();
         renderCurrentTask();
     }
 
     // initial render
     updateStatsUI();
-    renderAchievements();
     renderCurrentTask();
 </script>
 </body>
