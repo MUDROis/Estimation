@@ -1,122 +1,807 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rounding Quest - Neighborhood Store</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Corner Shop Quest: Rounding & Estimation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', 'Poppins', 'Roboto', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f5f0e7 0%, #e8dfd1 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+        }
+
+        /* main game card */
+        .game-container {
+            max-width: 900px;
+            width: 100%;
+            background: #fffef7;
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        /* header with shop theme */
+        .shop-header {
+            background: #2c5a2e;
+            padding: 1.5rem 2rem;
+            color: #f9e7c2;
+            border-bottom: 5px solid #f3b33d;
+        }
+
+        .shop-header h1 {
+            font-size: 1.9rem;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .shop-header h1 span {
+            background: #f3b33d;
+            color: #2c5a2e;
+            font-size: 1.4rem;
+            padding: 0.2rem 0.8rem;
+            border-radius: 50px;
+        }
+
+        .shop-sub {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-top: 8px;
+        }
+
+        /* score & progress bar */
+        .stats {
+            background: #fdf3e0;
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 12px;
+            border-bottom: 1px solid #ede3cf;
+        }
+
+        .score-box, .quest-counter, .money-box {
+            background: #ffffffcc;
+            backdrop-filter: blur(2px);
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .score-box span, .quest-counter span, .money-box span {
+            color: #b45f1b;
+        }
+
+        /* main quest area */
+        .quest-area {
+            padding: 2rem 2rem 1.8rem;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .scenario-card {
+            background: #fefaf2;
+            border-radius: 1.8rem;
+            padding: 1.8rem;
+            margin-bottom: 1rem;
+            border-left: 12px solid #f3b33d;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.03);
+        }
+
+        .scenario-text {
+            font-size: 1.35rem;
+            line-height: 1.4;
+            font-weight: 500;
+            color: #2d3e2b;
+        }
+
+        .instruction {
+            margin-top: 1rem;
+            font-size: 1.1rem;
+            background: #eef4e6;
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            color: #2c5a2e;
+        }
+
+        .question-box {
+            margin: 1.8rem 0 1rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .input-group input {
+            flex: 2;
+            min-width: 150px;
+            padding: 14px 18px;
+            font-size: 1.2rem;
+            border: 2px solid #ddd6c8;
+            border-radius: 60px;
+            outline: none;
+            transition: 0.2s;
+            background: white;
+            font-weight: 500;
+        }
+
+        .input-group input:focus {
+            border-color: #f3b33d;
+            box-shadow: 0 0 0 3px rgba(243, 179, 61, 0.2);
+        }
+
+        button {
+            background: #f3b33d;
+            border: none;
+            padding: 12px 26px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 60px;
+            color: #2c3e1f;
+            cursor: pointer;
+            transition: 0.15s linear;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        button:hover {
+            background: #e09d28;
+            transform: scale(0.97);
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        .next-btn {
+            background: #2c5a2e;
+            color: #fef5e6;
+        }
+
+        .next-btn:hover {
+            background: #1f421f;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 12px 18px;
+            border-radius: 40px;
+            font-weight: 500;
+            background: #f2eee7;
+            border-left: 5px solid #f3b33d;
+        }
+
+        .correct-feedback {
+            background: #d9f0da;
+            border-left-color: #2c7a2e;
+            color: #1a4f1a;
+        }
+
+        .wrong-feedback {
+            background: #ffe6e5;
+            border-left-color: #d9534f;
+            color: #a1221e;
+        }
+
+        .hint {
+            margin-top: 12px;
+            font-size: 0.9rem;
+            color: #a0692b;
+            font-style: italic;
+        }
+
+        /* shop section */
+        .shop-section {
+            background: #fefaf2;
+            border-radius: 1.8rem;
+            padding: 1.5rem;
+            border: 2px solid #f3b33d;
+        }
+
+        .shop-section h3 {
+            color: #2c5a2e;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-size: 1.3rem;
+        }
+
+        .shop-items {
+            display: grid;
+            gap: 10px;
+        }
+
+        .shop-item {
+            background: white;
+            border: 2px solid #ddd6c8;
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .shop-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .shop-item.purchased {
+            background: #d4edda;
+            border-color: #28a745;
+            cursor: default;
+        }
+
+        .shop-item.purchased::after {
+            content: "✓";
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #28a745;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        .item-name {
+            font-weight: bold;
+            color: #2d3e2b;
+            margin-bottom: 5px;
+        }
+
+        .item-price {
+            color: #b45f1b;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 28px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .restart-btn {
+            background: #9b7b4c;
+            color: white;
+            box-shadow: none;
+        }
+
+        .restart-btn:hover {
+            background: #7a5e38;
+        }
+
+        /* achievements section */
+        .achievements {
+            background: #fdf3e0;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            border-radius: 1.8rem;
+        }
+
+        .achievements h3 {
+            color: #2c5a2e;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-size: 1.3rem;
+        }
+
+        .achievement-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        .achievement {
+            background: white;
+            border: 2px solid #ddd6c8;
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .achievement.locked {
+            opacity: 0.6;
+            background: #f8f9fa;
+        }
+
+        .achievement.unlocked {
+            border-color: #28a745;
+            background: #d4edda;
+            animation: unlockAnimation 0.5s ease-in-out;
+        }
+
+        @keyframes unlockAnimation {
+            0% { transform: scale(0.8); opacity: 0.6; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .achievement span {
+            display: block;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+
+        .achievement small {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        /* final screen */
+        .final-screen {
+            text-align: center;
+            padding: 2rem;
+            grid-column: 1 / -1;
+        }
+
+        .final-screen h2 {
+            font-size: 2rem;
+            color: #2c5a2e;
+            margin-bottom: 1rem;
+        }
+
+        .final-score {
+            background: #f5e5c8;
+            display: inline-block;
+            padding: 0.6rem 1.8rem;
+            border-radius: 60px;
+            font-weight: bold;
+            font-size: 1.6rem;
+            margin: 1rem 0;
+        }
+
+        .play-again {
+            background: #2c5a2e;
+            margin-top: 1rem;
+            padding: 12px 32px;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.75rem;
+            padding: 1rem 2rem;
+            color: #a28c6b;
+            border-top: 1px solid #f0e5d6;
+            background: #fffcf5;
+        }
+
+        @media (max-width: 768px) {
+            .quest-area {
+                grid-template-columns: 1fr;
+                padding: 1.5rem;
+            }
+            .scenario-text {
+                font-size: 1.1rem;
+            }
+            .shop-header h1 {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="game-container">
-        <header>
-            <h1>Rounding Quest</h1>
-            <p>Neighborhood Store Adventure</p>
-        </header>
-
-        <div class="game-info">
-            <div class="score">
-                <span>Score: <span id="score">0</span></span>
-                <span>Money: $<span id="money">50</span></span>
-            </div>
-            <div class="level">
-                Level: <span id="level">1</span>
-            </div>
-        </div>
-
-        <div class="quest-info">
-            <div class="current-quest">
-                <h3>Current Quest</h3>
-                <p id="quest-text">Welcome to the Neighborhood Store! Round the prices correctly to buy items.</p>
-            </div>
-            <div class="progress">
-                <p>Quest Progress: <span id="progress">0/3</span></p>
-                <div class="progress-bar">
-                    <div id="progress-fill"></div>
-                </div>
-            </div>
-        </div>
-
-        <main>
-            <div class="store-section">
-                <h2>🏪 Neighborhood Store</h2>
-                <div class="store-items" id="store-items">
-                    <!-- Store items will be generated by JavaScript -->
-                </div>
-            </div>
-
-            <div class="rounding-section">
-                <h2>🎯 Rounding Challenge</h2>
-                <div class="challenge">
-                    <p id="challenge-text">Round this number to the nearest ten:</p>
-                    <div class="number-display">
-                        <span id="target-number">0</span>
-                    </div>
-                    <div class="options">
-                        <button class="option-btn" onclick="checkAnswer(this)">Option 1</button>
-                        <button class="option-btn" onclick="checkAnswer(this)">Option 2</button>
-                        <button class="option-btn" onclick="checkAnswer(this)">Option 3</button>
-                        <button class="option-btn" onclick="checkAnswer(this)">Option 4</button>
-                    </div>
-                </div>
-                
-                <div class="feedback" id="feedback"></div>
-            </div>
-        </main>
-
-        <div class="achievements">
-            <h3>🏆 Achievements</h3>
-            <div class="achievement-list" id="achievements">
-                <div class="achievement locked">
-                    <span>🎯 First Purchase</span>
-                    <small>Buy your first item</small>
-                </div>
-                <div class="achievement locked">
-                    <span>💰 Money Master</span>
-                    <small>Reach $100</small>
-                </div>
-                <div class="achievement locked">
-                    <span>🧮 Rounding Expert</span>
-                    <small>Complete 10 rounds correctly</small>
-                </div>
-            </div>
-        </div>
-
-        <div class="controls">
-            <button onclick="resetGame()" class="btn-reset">🔄 Reset Game</button>
-            <button onclick="showHelp()" class="btn-help">❓ Help</button>
-        </div>
+<div class="game-container" id="gameRoot">
+    <div class="shop-header">
+        <h1>
+            🛒 Corner Shop Quest
+            <span>round + estimate</span>
+        </h1>
+        <div class="shop-sub">📐 rounding & estimation · real life maths</div>
+    </div>
+    
+    <div class="stats">
+        <div class="score-box">🏆 SCORE: <span id="scoreValue">0</span> / <span id="totalTasksSpan">5</span></div>
+        <div class="quest-counter">📋 QUEST: <span id="questIndex">1</span> / <span id="totalSpan">5</span></div>
+        <div class="money-box">💰 MONEY: $<span id="moneyValue">50</span></div>
     </div>
 
-    <div class="modal" id="help-modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeHelp()">&times;</span>
-            <h2>How to Play</h2>
-            <div class="help-content">
-                <h3>🎮 Game Rules</h3>
-                <ul>
-                    <li>Round numbers correctly to earn money</li>
-                    <li>Use money to buy items from the store</li>
-                    <li>Complete quests to advance levels</li>
-                    <li>Each level gets more challenging</li>
-                </ul>
-                
-                <h3>🎯 Rounding Rules</h3>
-                <ul>
-                    <li><strong>To nearest 10:</strong> Look at the ones digit</li>
-                    <li><strong>To nearest 100:</strong> Look at the tens digit</li>
-                    <li><strong>To nearest whole:</strong> Look at the decimal</li>
-                </ul>
-                
-                <h3>🏪 Store Tips</h3>
-                <ul>
-                    <li>Buy items to unlock new quests</li>
-                    <li>Some items give bonus points</li>
-                    <li>Plan your purchases wisely!</li>
-                </ul>
+    <div id="dynamicContent" class="quest-area">
+        <!-- dynamic content will be injected here -->
+    </div>
+
+    <div class="achievements">
+        <h3>🏆 Achievements</h3>
+        <div class="achievement-list" id="achievementsList">
+            <div class="achievement locked">
+                <span>🎯 First Purchase</span>
+                <small>Buy your first item</small>
+            </div>
+            <div class="achievement locked">
+                <span>💰 Money Master</span>
+                <small>Reach $100</small>
+            </div>
+            <div class="achievement locked">
+                <span>🧮 Rounding Expert</span>
+                <small>Complete 5 rounds correctly</small>
             </div>
         </div>
     </div>
 
-    <script src="game.js"></script>
+    <div class="action-buttons">
+        <button class="restart-btn" id="restartBtn">🔄 Restart Game</button>
+        <button class="next-btn" id="nextBtn" style="display: none;">➡️ Next Task</button>
+    </div>
+
+    <footer>
+        ✨ Round & estimate like a shopkeeper! Type numbers (use decimal point, e.g., 2.6) ✨
+    </footer>
+</div>
+
+<script>
+    // ---------- QUEST DATA ----------
+    const tasks = [
+        {
+            scenario: "🥖 The fresh bread costs £1.45. You want to round the price to the nearest whole pound (nearest integer).",
+            instruction: "➡️ Rounded price (£):",
+            correctAnswer: 1,
+            hint: "💡 1.45 is exactly halfway? No, 1.45 is closer to 1 than to 2 because 1.45 - 1 = 0.45, and 2 - 1.45 = 0.55."
+        },
+        {
+            scenario: "🧀🥛🍎 You pick milk (£0.78), cheese (£2.23), and apples (£1.15). Round each price to the nearest whole pound, then estimate the total cost.",
+            instruction: "💰 Estimated total (£) (just the sum of rounded prices):",
+            correctAnswer: 4,
+            hint: "💡 0.78 → 1, 2.23 → 2, 1.15 → 1. Add them up."
+        },
+        {
+            scenario: "⚖️ A bag of flour weighs 2.56 kg. The recipe needs the weight rounded to the nearest tenth (one decimal place).",
+            instruction: "📦 Rounded weight (kg):",
+            correctAnswer: 2.6,
+            hint: "💡 Look at the hundredths digit: 6 ≥ 5, so round up the tenths: 2.5 becomes 2.6"
+        },
+        {
+            scenario: "🥣 Each cereal box costs £2.49. You need to buy 5 boxes. Estimate the total cost by first rounding ONE box price to the nearest pound, then multiply by 5.",
+            instruction: "🧾 Estimated total cost (£):",
+            correctAnswer: 10,
+            hint: "💡 £2.49 → nearest pound = £2, then 5 × 2 = £10"
+        },
+        {
+            scenario: "🍎 The shop inventory shows 147 apples in stock. The manager wants the number rounded to the nearest ten.",
+            instruction: "🔢 Rounded number (nearest ten):",
+            correctAnswer: 150,
+            hint: "💡 147: ones digit is 7 (≥5), so round up → 150"
+        }
+    ];
+
+    // Shop items
+    const shopItems = [
+        { id: 1, name: "🍎 Apple", price: 5, effect: "bonus:5", description: "+5 очков" },
+        { id: 2, name: "📚 Textbook", price: 15, effect: "multiplier:1.5", description: "x1.5 множитель очков" },
+        { id: 3, name: "💎 Gem", price: 25, effect: "bonus:10", description: "+10 очков" },
+        { id: 4, name: "🎯 Target Practice", price: 20, effect: "bonus:money:20", description: "+$20" },
+        { id: 5, name: "🧮 Calculator", price: 30, effect: "hint:1", description: "Подсказка +1" }
+    ];
+
+    // Game state
+    const TOTAL_TASKS = tasks.length;
+    let currentIndex = 0;
+    let currentScore = 0;
+    let money = 50;
+    let purchasedItems = [];
+    let answerLocked = false;
+    let currentCorrectAnswer = null;
+    let currentUserAnsweredCorrect = false;
+    let scoreMultiplier = 1;
+
+    // DOM elements
+    const dynamicContainer = document.getElementById("dynamicContent");
+    const scoreSpan = document.getElementById("scoreValue");
+    const questIndexSpan = document.getElementById("questIndex");
+    const totalTasksSpan = document.getElementById("totalTasksSpan");
+    const totalSpan = document.getElementById("totalSpan");
+    const moneySpan = document.getElementById("moneyValue");
+    const achievementsList = document.getElementById("achievementsList");
+
+    // helper: update stats UI
+    function updateStatsUI() {
+        scoreSpan.textContent = currentScore;
+        questIndexSpan.textContent = currentIndex + 1;
+        totalTasksSpan.textContent = TOTAL_TASKS;
+        totalSpan.textContent = TOTAL_TASKS;
+        moneySpan.textContent = money;
+    }
+
+    // render shop items
+    function renderShop() {
+        const shopContainer = document.createElement('div');
+        shopContainer.className = 'shop-section';
+        shopContainer.innerHTML = '<h3>🏪 Neighborhood Store</h3><div class="shop-items" id="shopItems"></div>';
+        
+        const shopItemsContainer = shopContainer.querySelector('#shopItems');
+        
+        shopItems.forEach(item => {
+            const isPurchased = purchasedItems.includes(item.id);
+            const itemElement = document.createElement('div');
+            itemElement.className = `shop-item ${isPurchased ? 'purchased' : ''}`;
+            
+            if (!isPurchased) {
+                itemElement.onclick = () => purchaseItem(item);
+            }
+            
+            itemElement.innerHTML = `
+                <div class="item-name">${item.name}</div>
+                <div class="item-price">$${item.price}</div>
+            `;
+            
+            shopItemsContainer.appendChild(itemElement);
+        });
+        
+        return shopContainer;
+    }
+
+    // purchase item
+    function purchaseItem(item) {
+        if (money >= item.price && !purchasedItems.includes(item.id)) {
+            money -= item.price;
+            purchasedItems.push(item.id);
+            applyItemEffect(item);
+            updateStatsUI();
+            renderAchievements();
+            showFeedback(`You bought ${item.name}! ${item.description}`, 'correct');
+            renderShop();
+        } else if (purchasedItems.includes(item.id)) {
+            showFeedback('This item is already purchased!', 'wrong');
+        } else {
+            showFeedback('Not enough money!', 'wrong');
+        }
+    }
+
+    // apply item effect
+    function applyItemEffect(item) {
+        switch (item.effect) {
+            case 'bonus:5':
+                currentScore += 5;
+                break;
+            case 'multiplier:1.5':
+                scoreMultiplier = 1.5;
+                break;
+            case 'bonus:10':
+                currentScore += 10;
+                break;
+            case 'bonus:money:20':
+                money += 20;
+                break;
+            case 'hint:1':
+                // Can add hint functionality
+                break;
+        }
+    }
+
+    // render achievements
+    function renderAchievements() {
+        achievementsList.innerHTML = '';
+        
+        const achievements = [
+            { id: "first_purchase", name: "🎯 First Purchase", description: "Buy your first item", unlocked: purchasedItems.length > 0 },
+            { id: "money_master", name: "💰 Money Master", description: "Reach $100", unlocked: money >= 100 },
+            { id: "rounding_expert", name: "🧮 Rounding Expert", description: "Complete 5 rounds correctly", unlocked: currentScore >= 5 }
+        ];
+        
+        achievements.forEach(achievement => {
+            const achievementElement = document.createElement('div');
+            achievementElement.className = `achievement ${achievement.unlocked ? 'unlocked' : 'locked'}`;
+            achievementElement.innerHTML = `
+                <span>${achievement.name}</span>
+                <small>${achievement.description}</small>
+            `;
+            achievementsList.appendChild(achievementElement);
+        });
+    }
+
+    // show feedback
+    function showFeedback(message, type) {
+        const existingFeedback = document.querySelector('.feedback');
+        if (existingFeedback) {
+            existingFeedback.remove();
+        }
+        
+        const feedbackDiv = document.createElement('div');
+        feedbackDiv.className = `feedback ${type}-feedback`;
+        feedbackDiv.textContent = message;
+        
+        const questionBox = document.querySelector('.question-box');
+        questionBox.appendChild(feedbackDiv);
+        
+        setTimeout(() => {
+            if (feedbackDiv.parentNode) {
+                feedbackDiv.remove();
+            }
+        }, 3000);
+    }
+
+    // render current task (index = currentIndex)
+    function renderCurrentTask() {
+        if (currentIndex >= TOTAL_TASKS) {
+            renderFinalScreen();
+            return;
+        }
+
+        const task = tasks[currentIndex];
+        currentCorrectAnswer = task.correctAnswer;
+        currentUserAnsweredCorrect = false;
+        answerLocked = false;
+
+        const shopSection = renderShop();
+        
+        dynamicContainer.innerHTML = '';
+        dynamicContainer.appendChild(shopSection);
+        
+        const scenarioCard = document.createElement('div');
+        scenarioCard.className = 'scenario-card';
+        scenarioCard.innerHTML = `
+            <div class="scenario-text">📖 ${task.scenario}</div>
+            <div class="instruction">✏️ ${task.instruction}</div>
+        `;
+        
+        const questionBox = document.createElement('div');
+        questionBox.className = 'question-box';
+        questionBox.innerHTML = `
+            <div class="input-group">
+                <input type="text" id="answerInput" placeholder="Type your answer here ..." autocomplete="off">
+                <button id="checkBtn">✔️ CHECK</button>
+            </div>
+            <div class="hint">🔍 HINT: ${task.hint}</div>
+        `;
+        
+        const actionButtons = document.createElement('div');
+        actionButtons.className = 'action-buttons';
+        actionButtons.innerHTML = `
+            <button id="restartBtn" class="restart-btn">🔄 Restart Game</button>
+            <button id="nextBtn" class="next-btn" style="display: none;">➡️ Next Task</button>
+        `;
+        
+        dynamicContainer.appendChild(scenarioCard);
+        dynamicContainer.appendChild(questionBox);
+        dynamicContainer.appendChild(actionButtons);
+
+        // attach event listeners
+        const checkBtn = document.getElementById("checkBtn");
+        const nextBtn = document.getElementById("nextBtn");
+        const restartBtn = document.getElementById("restartBtn");
+        const answerInput = document.getElementById("answerInput");
+
+        checkBtn.addEventListener("click", () => handleCheck());
+        restartBtn.addEventListener("click", () => restartGame());
+        if (nextBtn) nextBtn.addEventListener("click", () => goToNextTask());
+
+        function handleCheck() {
+            if (answerLocked) {
+                showFeedback("You already checked this task! Press NEXT TASK to continue.", "info");
+                return;
+            }
+            const rawValue = answerInput.value.trim();
+            if (rawValue === "") {
+                showFeedback("❌ Please enter a number!", "wrong");
+                return;
+            }
+            const numberValue = parseFloat(rawValue);
+            if (isNaN(numberValue)) {
+                showFeedback("❌ That's not a valid number. Use digits and decimal point (e.g., 2.6).", "wrong");
+                return;
+            }
+
+            // compare with correct answer (allow small tolerance for floating, but here exact)
+            let isCorrect = false;
+            const delta = 0.00001;
+            if (Math.abs(numberValue - currentCorrectAnswer) < delta) {
+                isCorrect = true;
+            }
+
+            if (isCorrect) {
+                if (!currentUserAnsweredCorrect) {
+                    currentScore++;
+                    currentUserAnsweredCorrect = true;
+                    money += 10 * scoreMultiplier;
+                    updateStatsUI();
+                    renderAchievements();
+                }
+                showFeedback("✅ CORRECT! +1 point! Great rounding!", "correct");
+                answerLocked = true;
+                disableCheckAndShowNext(true);
+            } else {
+                // wrong answer
+                showFeedback(`❌ WRONG. The correct answer is ${currentCorrectAnswer}. Don't worry, try again next time!`, "wrong");
+                answerLocked = true;
+                disableCheckAndShowNext(false);
+            }
+        }
+
+        function disableCheckAndShowNext(pointsEarned) {
+            const check = document.getElementById("checkBtn");
+            const next = document.getElementById("nextBtn");
+            if (check) check.disabled = true;
+            if (next) next.style.display = "inline-flex";
+            // also disable input to avoid confusion
+            const inp = document.getElementById("answerInput");
+            if (inp) inp.disabled = true;
+        }
+    }
+
+    function goToNextTask() {
+        if (currentIndex + 1 < TOTAL_TASKS) {
+            currentIndex++;
+            renderCurrentTask();
+            updateStatsUI();
+        } else if (currentIndex + 1 === TOTAL_TASKS) {
+            // after finishing last task, move to final screen
+            currentIndex++;  // becomes TOTAL_TASKS
+            updateStatsUI();
+            renderFinalScreen();
+        } else {
+            // already finished, restart
+            renderFinalScreen();
+        }
+    }
+
+    // render final screen after last quest completed
+    function renderFinalScreen() {
+        const perfect = currentScore === TOTAL_TASKS;
+        dynamicContainer.innerHTML = `
+            <div class="final-screen">
+                <h2>🏁 QUEST COMPLETE! 🏁</h2>
+                <div class="scenario-card" style="border-left-color: #2c5a2e;">
+                    <p style="font-size:1.3rem;">✨ You finished the <strong>Corner Shop</strong> rounding mission!</p>
+                    <p>Your final score: <strong>${currentScore} / ${TOTAL_TASKS}</strong></p>
+                    <p>Money earned: <strong>$${money}</strong></p>
+                    ${perfect ? '<p>🌟 PERFECT! Amazing estimation skills! 🌟</p>' : '<p>📚 Good job! Try again to become a rounding master.</p>'}
+                    <div class="final-score">🏅 ${currentScore} / ${TOTAL_TASKS} 🏅</div>
+                    <button class="play-again" id="restartFinalBtn">🔄 PLAY AGAIN</button>
+                </div>
+            </div>
+        `;
+        const restartBtn = document.getElementById("restartFinalBtn");
+        if (restartBtn) restartBtn.addEventListener("click", () => restartGame());
+    }
+
+    function restartGame() {
+        currentIndex = 0;
+        currentScore = 0;
+        money = 50;
+        purchasedItems = [];
+        answerLocked = false;
+        currentUserAnsweredCorrect = false;
+        scoreMultiplier = 1;
+        updateStatsUI();
+        renderAchievements();
+        renderCurrentTask();
+    }
+
+    // initial render
+    updateStatsUI();
+    renderAchievements();
+    renderCurrentTask();
+</script>
 </body>
 </html>
