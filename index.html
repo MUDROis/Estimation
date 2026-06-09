@@ -75,7 +75,7 @@
             border-bottom: 1px solid #ede3cf;
         }
 
-        .score-box, .quest-counter {
+        .score-box, .quest-counter, .money-box {
             background: #ffffffcc;
             backdrop-filter: blur(2px);
             padding: 6px 14px;
@@ -85,7 +85,7 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
-        .score-box span, .quest-counter span {
+        .score-box span, .quest-counter span, .money-box span {
             color: #b45f1b;
         }
 
@@ -207,6 +207,7 @@
             font-size: 0.9rem;
             color: #a0692b;
             font-style: italic;
+            display: none; /* Hidden by default */
         }
 
         .action-buttons {
@@ -226,6 +227,132 @@
 
         .restart-btn:hover {
             background: #7a5e38;
+        }
+
+        /* Shop styles */
+        .shop-container {
+            padding: 2rem;
+        }
+
+        .shop-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f3b33d;
+            border-radius: 1.5rem;
+            color: #2c5a2e;
+        }
+
+        .shop-header h2 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .money-display {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-top: 1rem;
+        }
+
+        .shop-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .category {
+            background: #fefaf2;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            border: 2px solid #f3b33d;
+        }
+
+        .category h3 {
+            color: #2c5a2e;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-size: 1.3rem;
+        }
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+        }
+
+        .shop-item {
+            background: white;
+            border: 2px solid #ddd6c8;
+            border-radius: 12px;
+            padding: 12px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .shop-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .shop-item.purchased {
+            background: #d4edda;
+            border-color: #28a745;
+            cursor: default;
+        }
+
+        .item-emoji {
+            font-size: 2em;
+            margin-bottom: 8px;
+        }
+
+        .item-name {
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #2d3e2b;
+            margin-bottom: 5px;
+        }
+
+        .item-price {
+            color: #b45f1b;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .purchased-check {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #28a745;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.8em;
+        }
+
+        .shop-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+            20% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            80% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
         }
 
         /* final screen */
@@ -290,6 +417,7 @@
     <div class="stats">
         <div class="score-box">🏆 SCORE: <span id="scoreValue">0</span> / <span id="totalTasksSpan">5</span></div>
         <div class="quest-counter">📋 QUEST: <span id="questIndex">1</span> / <span id="totalSpan">5</span></div>
+        <div class="money-box">💰 MONEY: $<span id="moneyValue">0</span></div>
     </div>
     <div id="dynamicContent" class="quest-area">
         <!-- dynamic content will be injected here -->
@@ -341,12 +469,16 @@
     let currentCorrectAnswer = null;
     let currentUserAnsweredCorrect = false; // whether this task already gave a point
 
+    // Game state
+    let totalMoney = 0;
+
     // DOM elements
     const dynamicContainer = document.getElementById("dynamicContent");
     const scoreSpan = document.getElementById("scoreValue");
     const questIndexSpan = document.getElementById("questIndex");
     const totalTasksSpan = document.getElementById("totalTasksSpan");
     const totalSpan = document.getElementById("totalSpan");
+    const moneySpan = document.getElementById("moneyValue");
 
     // helper: update stats UI
     function updateStatsUI() {
@@ -354,7 +486,49 @@
         questIndexSpan.textContent = currentIndex + 1;
         totalTasksSpan.textContent = TOTAL_TASKS;
         totalSpan.textContent = TOTAL_TASKS;
+        moneySpan.textContent = totalMoney;
     }
+
+    // Shop items data
+    const shopItems = {
+        food: [
+            { id: 1, name: "🍎 Apple", price: 5, emoji: "🍎" },
+            { id: 2, name: "🍕 Pizza", price: 12, emoji: "🍕" },
+            { id: 3, name: "🍔 Burger", price: 8, emoji: "🍔" },
+            { id: 4, name: "🍌 Banana", price: 3, emoji: "🍌" },
+            { id: 5, name: "🥗 Salad", price: 6, emoji: "🥗" }
+        ],
+        clothes: [
+            { id: 6, name: "👕 T-Shirt", price: 15, emoji: "👕" },
+            { id: 7, name: "👖 Jeans", price: 25, emoji: "👖" },
+            { id: 8, name: "👟 Sneakers", price: 35, emoji: "👟" },
+            { id: 9, name: "🧥 Jacket", price: 45, emoji: "🧥" },
+            { id: 10, name: "👒 Hat", price: 10, emoji: "👒" }
+        ],
+        tech: [
+            { id: 11, name: "📱 Phone", price: 80, emoji: "📱" },
+            { id: 12, name: "💻 Laptop", price: 120, emoji: "💻" },
+            { id: 13, name: "🎧 Headphones", price: 40, emoji: "🎧" },
+            { id: 14, name: "⌚ Watch", price: 60, emoji: "⌚" },
+            { id: 15, name: "📷 Camera", price: 90, emoji: "📷" }
+        ],
+        books: [
+            { id: 16, name: "📚 Textbook", price: 20, emoji: "📚" },
+            { id: 17, name: "📖 Novel", price: 12, emoji: "📖" },
+            { id: 18, name: "📔 Notebook", price: 8, emoji: "📔" },
+            { id: 19, name: "📒 Diary", price: 10, emoji: "📒" },
+            { id: 20, name: "📕 Comic", price: 15, emoji: "📕" }
+        ],
+        games: [
+            { id: 21, name: "🎮 Video Game", price: 50, emoji: "🎮" },
+            { id: 22, name: "🎲 Board Game", price: 25, emoji: "🎲" },
+            { id: 23, name: "🃏 Cards", price: 10, emoji: "🃏" },
+            { id: 24, name: "🎯 Darts", price: 20, emoji: "🎯" },
+            { id: 25, name: "🏀 Basketball", price: 30, emoji: "🏀" }
+        ]
+    };
+
+    let purchasedItems = [];
 
     // render final screen after last quest completed
     function renderFinalScreen() {
@@ -365,14 +539,143 @@
                 <div class="scenario-card" style="border-left-color: #2c5a2e;">
                     <p style="font-size:1.3rem;">✨ You finished the <strong>Corner Shop</strong> rounding mission!</p>
                     <p>Your final score: <strong>${currentScore} / ${TOTAL_TASKS}</strong></p>
+                    <p>Total money earned: <strong>$${totalMoney}</strong></p>
                     ${perfect ? '<p>🌟 PERFECT! Amazing estimation skills! 🌟</p>' : '<p>📚 Good job! Try again to become a rounding master.</p>'}
                     <div class="final-score">🏅 ${currentScore} / ${TOTAL_TASKS} 🏅</div>
-                    <button class="play-again" id="restartFinalBtn">🔄 PLAY AGAIN</button>
+                    <div style="margin: 2rem 0;">
+                        <button class="play-again" id="shopBtn">🛒 GO TO SHOP</button>
+                        <button class="restart-btn" id="restartFinalBtn">🔄 PLAY AGAIN</button>
+                    </div>
                 </div>
             </div>
         `;
+        const shopBtn = document.getElementById("shopBtn");
         const restartBtn = document.getElementById("restartFinalBtn");
+        if (shopBtn) shopBtn.addEventListener("click", () => renderShopScreen());
         if (restartBtn) restartBtn.addEventListener("click", () => restartGame());
+    }
+
+    // render shop screen
+    function renderShopScreen() {
+        dynamicContainer.innerHTML = `
+            <div class="shop-container">
+                <div class="shop-header">
+                    <h2>🛒 REWARDS SHOP</h2>
+                    <p>Spend your hard-earned money!</p>
+                    <div class="money-display">💰 Available: $<span id="shopMoney">${totalMoney}</span></div>
+                </div>
+                
+                <div class="shop-categories">
+                    <div class="category" id="food-category">
+                        <h3>🍎 Food</h3>
+                        <div class="items-grid"></div>
+                    </div>
+                    <div class="category" id="clothes-category">
+                        <h3>👕 Clothes</h3>
+                        <div class="items-grid"></div>
+                    </div>
+                    <div class="category" id="tech-category">
+                        <h3>💻 Tech</h3>
+                        <div class="items-grid"></div>
+                    </div>
+                    <div class="category" id="books-category">
+                        <h3>📚 Books</h3>
+                        <div class="items-grid"></div>
+                    </div>
+                    <div class="category" id="games-category">
+                        <h3>🎮 Games</h3>
+                        <div class="items-grid"></div>
+                    </div>
+                </div>
+                
+                <div class="shop-actions">
+                    <button class="restart-btn" id="backToResults">🔙 BACK TO RESULTS</button>
+                    <button class="restart-btn" id="restartShopBtn">🔄 PLAY AGAIN</button>
+                </div>
+            </div>
+        `;
+
+        // Render all categories
+        Object.keys(shopItems).forEach(category => {
+            const categoryElement = document.getElementById(`${category}-category`);
+            const gridElement = categoryElement.querySelector('.items-grid');
+            
+            shopItems[category].forEach(item => {
+                const itemElement = createShopItem(item);
+                gridElement.appendChild(itemElement);
+            });
+        });
+
+        // Add event listeners
+        document.getElementById("backToResults").addEventListener("click", renderFinalScreen);
+        document.getElementById("restartShopBtn").addEventListener("click", restartGame);
+    }
+
+    // Create shop item element
+    function createShopItem(item) {
+        const isPurchased = purchasedItems.includes(item.id);
+        const itemDiv = document.createElement('div');
+        itemDiv.className = `shop-item ${isPurchased ? 'purchased' : ''}`;
+        
+        if (!isPurchased && totalMoney >= item.price) {
+            itemDiv.addEventListener('click', () => purchaseItem(item));
+        }
+        
+        itemDiv.innerHTML = `
+            <div class="item-emoji">${item.emoji}</div>
+            <div class="item-name">${item.name}</div>
+            <div class="item-price">$${item.price}</div>
+            ${isPurchased ? '<div class="purchased-check">✓</div>' : ''}
+        `;
+        
+        return itemDiv;
+    }
+
+    // Purchase item
+    function purchaseItem(item) {
+        if (totalMoney >= item.price && !purchasedItems.includes(item.id)) {
+            totalMoney -= item.price;
+            purchasedItems.push(item.id);
+            
+            // Update display
+            updateShopMoney();
+            renderShopScreen();
+            
+            showPurchaseFeedback(`🎉 You bought ${item.emoji} ${item.name}!`, 'correct');
+        } else if (purchasedItems.includes(item.id)) {
+            showPurchaseFeedback('Already purchased!', 'wrong');
+        } else {
+            showPurchaseFeedback('Not enough money!', 'wrong');
+        }
+    }
+
+    // Update shop money display
+    function updateShopMoney() {
+        const moneyElement = document.getElementById("shopMoney");
+        if (moneyElement) {
+            moneyElement.textContent = totalMoney;
+        }
+    }
+
+    // Show purchase feedback
+    function showPurchaseFeedback(message, type) {
+        const feedbackDiv = document.createElement('div');
+        feedbackDiv.className = `feedback ${type}-feedback`;
+        feedbackDiv.textContent = message;
+        feedbackDiv.style.position = 'fixed';
+        feedbackDiv.style.top = '20px';
+        feedbackDiv.style.left = '50%';
+        feedbackDiv.style.transform = 'translateX(-50%)';
+        feedbackDiv.style.zIndex = '1000';
+        feedbackDiv.style.animation = 'fadeInOut 3s ease-in-out';
+        
+        document.body.appendChild(feedbackDiv);
+        
+        setTimeout(() => {
+            if (feedbackDiv.parentNode) {
+                feedbackDiv.remove();
+            }
+        }, 3000);
     }
 
     // render current task (index = currentIndex)
@@ -400,7 +703,6 @@
                 <div id="feedbackArea" class="feedback">
                     💡 Enter your answer and press CHECK.
                 </div>
-                <div class="hint" id="hintArea">🔍 HINT: ${task.hint}</div>
             </div>
             <div class="action-buttons">
                 <button id="restartBtn" class="restart-btn">🔄 Restart Quest</button>
@@ -447,6 +749,11 @@
                 if (!currentUserAnsweredCorrect) {
                     currentScore++;
                     currentUserAnsweredCorrect = true;
+                    
+                    // Earn money for correct answer
+                    const moneyEarned = 15 + (currentIndex * 5); // $15 base + $5 per quest
+                    totalMoney += moneyEarned;
+                    
                     updateStatsUI();
                 }
                 showFeedback("✅ CORRECT! +1 point! Great rounding!", "correct");
@@ -476,9 +783,25 @@
             if (!feedbackDiv) return;
             feedbackDiv.innerHTML = msg;
             feedbackDiv.classList.remove("correct-feedback", "wrong-feedback");
-            if (type === "correct") feedbackDiv.classList.add("correct-feedback");
-            else if (type === "wrong") feedbackDiv.classList.add("wrong-feedback");
-            else feedbackDiv.classList.remove("correct-feedback", "wrong-feedback");
+            if (type === "correct") {
+                feedbackDiv.classList.add("correct-feedback");
+                // Hide hint for correct answers
+                const hintArea = document.getElementById("hintArea");
+                if (hintArea) hintArea.style.display = "none";
+            } else if (type === "wrong") {
+                feedbackDiv.classList.add("wrong-feedback");
+                // Show hint for wrong answers
+                const hintArea = document.getElementById("hintArea");
+                if (hintArea) {
+                    hintArea.innerHTML = `🔍 HINT: ${task.hint}`;
+                    hintArea.style.display = "block";
+                }
+            } else {
+                feedbackDiv.classList.remove("correct-feedback", "wrong-feedback");
+                // Hide hint when just showing instructions
+                const hintArea = document.getElementById("hintArea");
+                if (hintArea) hintArea.style.display = "none";
+            }
         }
 
         function getEncouragement() {
@@ -506,6 +829,8 @@
     function restartGame() {
         currentIndex = 0;
         currentScore = 0;
+        totalMoney = 0;
+        purchasedItems = [];
         answerLocked = false;
         currentUserAnsweredCorrect = false;
         updateStatsUI();
